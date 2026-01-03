@@ -33,6 +33,9 @@ export async function GET(request) {
           email: true,
           role: true,
           department: true,
+          salary: true,
+          leaveBalance: true,
+          hourlyRate: true,
           createdAt: true,
         }
       });
@@ -60,6 +63,9 @@ export async function GET(request) {
           email: true,
           role: true,
           department: true,
+          salary: true,
+          leaveBalance: true,
+          hourlyRate: true,
           createdAt: true,
         },
         orderBy: {
@@ -121,9 +127,9 @@ export async function POST(request) {
     // Required fields check karo
     if (!name || !email || !role || !password) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Name, email, role aur password required hain' 
+        {
+          success: false,
+          error: 'Name, email, role aur password required hain'
         },
         { status: 400 }
       );
@@ -169,6 +175,8 @@ export async function POST(request) {
         password: hashedPassword, // Hashed password save hoga
         role: role,
         department: department || null,
+        salary: body.salary ? parseFloat(body.salary) : 0,
+        leaveBalance: body.leaveBalance ? parseInt(body.leaveBalance) : 24,
       },
       select: {
         id: true,
@@ -176,15 +184,17 @@ export async function POST(request) {
         email: true,
         role: true,
         department: true,
+        salary: true,
+        leaveBalance: true,
         createdAt: true,
       }
     });
 
     return NextResponse.json(
-      { 
-        success: true, 
+      {
+        success: true,
         message: 'User successfully create ho gaya!',
-        data: newUser 
+        data: newUser
       },
       { status: 201 }
     );
@@ -267,7 +277,11 @@ export async function PATCH(request) {
     // Database mein role update karo
     const updatedUser = await prisma.user.update({
       where: { id: userId },
-      data: { role: role },
+      data: {
+        role: role,
+        salary: body.salary !== undefined ? parseFloat(body.salary) : undefined,
+        leaveBalance: body.leaveBalance !== undefined ? parseInt(body.leaveBalance) : undefined,
+      },
       select: {
         id: true,
         name: true,
@@ -279,10 +293,10 @@ export async function PATCH(request) {
     });
 
     return NextResponse.json(
-      { 
-        success: true, 
+      {
+        success: true,
         message: 'Role successfully update ho gaya!',
-        data: updatedUser 
+        data: updatedUser
       }
     );
 

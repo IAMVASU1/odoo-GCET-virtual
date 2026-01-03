@@ -13,7 +13,7 @@ import { motion } from "framer-motion"
 export default function Login() {
   const router = useRouter() // Next.js router for navigation
   const { login } = useAuth() // Get login function from auth context
-  
+
   // Form state management
   const [email, setEmail] = useState("") // Stores email input (Login ID)
   const [password, setPassword] = useState("") // Stores password input
@@ -56,7 +56,7 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault()
     setErrors({})
-    
+
     const validationErrors = validateLoginForm()
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors)
@@ -64,14 +64,14 @@ export default function Login() {
     }
 
     setIsSubmitting(true)
-    
+
     try {
       await login({
         email,
         loginId: email,
         password,
       })
-      
+
       await router.push("/dashboard")
     } catch (error) {
       console.error("Login error:", error)
@@ -96,7 +96,7 @@ export default function Login() {
             </div>
           </div>
 
-          <h1 className="text-2xl font-bold text-center text-foreground mb-2">WorkZen</h1>
+          <h1 className="text-2xl font-bold text-center text-foreground mb-2">DayFlow</h1>
           <p className="text-center text-muted-foreground mb-8">HRMS Dashboard</p>
 
           {/* General Error Message */}
@@ -121,9 +121,8 @@ export default function Login() {
                 }}
                 onFocus={() => setErrors({})}
                 placeholder="your-login-id or email"
-                className={`w-full px-4 py-2 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 ${
-                  errors.email ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-accent"
-                }`}
+                className={`w-full px-4 py-2 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 ${errors.email ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-accent"
+                  }`}
               />
               {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
             </div>
@@ -142,9 +141,8 @@ export default function Login() {
                 }}
                 onFocus={() => setErrors({})}
                 placeholder="••••••••"
-                className={`w-full px-4 py-2 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 ${
-                  errors.password ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-accent"
-                }`}
+                className={`w-full px-4 py-2 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 ${errors.password ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-accent"
+                  }`}
               />
               {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
             </div>
@@ -152,9 +150,8 @@ export default function Login() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`w-full bg-primary text-primary-foreground py-2 rounded-lg font-semibold transition-opacity ${
-                isSubmitting ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
-              }`}
+              className={`w-full bg-primary text-primary-foreground py-2 rounded-lg font-semibold transition-opacity ${isSubmitting ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
+                }`}
             >
               {isSubmitting ? "SIGNING IN..." : "SIGN IN"}
             </button>

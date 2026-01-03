@@ -11,12 +11,12 @@ export async function GET() {
   try {
     // Check karo ki already users hain ya nahi
     const existingUsers = await prisma.user.count();
-    
+
     if (existingUsers > 0) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: `Database mein already ${existingUsers} users hain. Pehle unhe delete karo.` 
+        {
+          success: false,
+          error: `Database mein already ${existingUsers} users hain. Pehle unhe delete karo.`
         },
         { status: 400 }
       );
@@ -29,7 +29,7 @@ export async function GET() {
     const admin = await prisma.user.create({
       data: {
         name: 'Admin User',
-        email: 'admin@workzen.com',
+        email: 'admin@DayFlow.com',
         password: hashedPassword,
         role: 'Admin',
         department: 'Management',
@@ -40,7 +40,7 @@ export async function GET() {
     const employee = await prisma.user.create({
       data: {
         name: 'Rohit Sharma',
-        email: 'rohit@workzen.com',
+        email: 'rohit@DayFlow.com',
         password: await bcrypt.hash('password123', 10),
         role: 'Employee',
         department: 'Development',
@@ -51,7 +51,7 @@ export async function GET() {
     const manager = await prisma.user.create({
       data: {
         name: 'Ananya Patel',
-        email: 'ananya@workzen.com',
+        email: 'ananya@DayFlow.com',
         password: await bcrypt.hash('password123', 10),
         role: 'Manager',
         department: 'HR',

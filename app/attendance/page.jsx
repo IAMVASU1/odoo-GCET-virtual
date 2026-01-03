@@ -125,6 +125,14 @@ export default function Attendance() {
           calculatedStatus = 'leave'
         }
 
+        // Calculate working hours
+        let workingHours = 0
+        if (dateAttendance?.checkIn && dateAttendance?.checkOut) {
+          const checkInDate = new Date(dateAttendance.checkIn)
+          const checkOutDate = new Date(dateAttendance.checkOut)
+          workingHours = (checkOutDate - checkInDate) / (1000 * 60 * 60) // Convert to hours
+        }
+
         return {
           id: user.id,
           name: user.name,
@@ -134,6 +142,7 @@ export default function Attendance() {
           status: calculatedStatus,
           checkInTime: dateAttendance?.checkIn ? new Date(dateAttendance.checkIn).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '-',
           checkOutTime: dateAttendance?.checkOut ? new Date(dateAttendance.checkOut).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '-',
+          workingHours: workingHours,
           avatar: user.name.charAt(0).toUpperCase(),
           avatarColor: '#8B5CF6'
         }
@@ -159,7 +168,7 @@ export default function Attendance() {
   }
 
   // Table column headers
-  const headers = ["ID", "Name", "Department", "Position", "Status", "Check-In", "Check-Out"]
+  const headers = ["ID", "Name", "Department", "Position", "Status", "Check-In", "Check-Out", "Working Hours"]
 
   /**
    * Map employee records to table rows
@@ -193,6 +202,19 @@ export default function Attendance() {
     </span>,
     emp.checkInTime || "-",
     emp.checkOutTime || "-",
+    <span
+      key={`hours-${emp.id}`}
+      className={`font-medium ${emp.workingHours >= 8
+        ? "text-green-600 dark:text-green-400"
+        : emp.workingHours >= 4
+          ? "text-yellow-600 dark:text-yellow-400"
+          : emp.workingHours > 0
+            ? "text-red-600 dark:text-red-400"
+            : "text-gray-400"
+        }`}
+    >
+      {emp.workingHours > 0 ? `${emp.workingHours.toFixed(2)} hrs` : "-"}
+    </span>,
   ])
 
   return (
@@ -227,7 +249,7 @@ export default function Attendance() {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div className="bg-card border border-border rounded-lg p-6">
             <p className="text-sm text-muted-foreground mb-1">Total Employees</p>
             <p className="text-3xl font-bold text-foreground">{employees.length}</p>
@@ -254,6 +276,12 @@ export default function Attendance() {
             </p>
             <p className="text-3xl font-bold text-red-600">
               {employees.filter(emp => emp.status === "absent").length}
+            </p>
+          </div>
+          <div className="bg-card border border-border rounded-lg p-6">
+            <p className="text-sm text-muted-foreground mb-1">Total Hours Worked</p>
+            <p className="text-3xl font-bold text-primary">
+              {employees.reduce((total, emp) => total + emp.workingHours, 0).toFixed(1)} hrs
             </p>
           </div>
         </div>

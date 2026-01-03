@@ -1,7 +1,7 @@
-# WorkZen - Smart Human Resource Management System 💡
+# DayFlow - Smart Human Resource Management System 💡
 
 <p align="center">
-  <img src="https.raw.githubusercontent.com/pavan-devmurari/workzen---smart-human-resource-management-system/Workzen---Smart-Human-Resource-Management-System-adb3a93c315a2088df20cda5cef096bb7e0addb9/public/apple-icon.png" alt="WorkZen Logo" width="150">
+  <img src="https.raw.githubusercontent.com/pavan-devmurari/DayFlow---smart-human-resource-management-system/DayFlow---Smart-Human-Resource-Management-System-adb3a93c315a2088df20cda5cef096bb7e0addb9/public/apple-icon.png" alt="DayFlow Logo" width="150">
 </p>
 
 <p align="center">
@@ -18,9 +18,9 @@
 
 ## 🚀 Vision
 
-WorkZen aims to modernize and simplify how organizations manage people, processes, and payroll through a comprehensive, all-in-one Human Resource Management System (HRMS). The platform is designed to provide a clean, reliable, and user-friendly experience for both employees and administrators, reducing manual dependency and empowering data-driven workforce decisions.
+DayFlow aims to modernize and simplify how organizations manage people, processes, and payroll through a comprehensive, all-in-one Human Resource Management System (HRMS). The platform is designed to provide a clean, reliable, and user-friendly experience for both employees and administrators, reducing manual dependency and empowering data-driven workforce decisions.
 
-This project was built for a hackathon based on the **[WorkZen HRMS Problem Statement](https://github.com/pavan-devmurari/workzen---smart-human-resource-management-system/blob/Workzen---Smart-Human-Resource-Management-System-adb3a93c315a2088df20cda5cef096bb7e0addb9/02%20_WorkZen_HRMS_Problem_Statement.pdf)**.
+This project was built for a hackathon based on the **[DayFlow HRMS Problem Statement](https://github.com/pavan-devmurari/DayFlow---smart-human-resource-management-system/blob/DayFlow---Smart-Human-Resource-Management-System-adb3a93c315a2088df20cda5cef096bb7e0addb9/02%20_DayFlow_HRMS_Problem_Statement.pdf)**.
 
 ## ✨ Key Features
 
@@ -47,7 +47,7 @@ The system is built with a modular approach, focusing on the core pillars of HR 
 
 ## 💻 Tech Stack
 
-WorkZen is built with a modern, scalable, and type-safe stack:
+DayFlow is built with a modern, scalable, and type-safe stack:
 
 | Category | Technology |
 | :--- | :--- |
@@ -81,8 +81,8 @@ To run this project locally, follow these steps:
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/pavan-devmurari/workzen---smart-human-resource-management-system.git](https://github.com/pavan-devmurari/workzen---smart-human-resource-management-system.git)
-    cd workzen---smart-human-resource-management-system
+    git clone [https://github.com/pavan-devmurari/DayFlow---smart-human-resource-management-system.git](https://github.com/pavan-devmurari/DayFlow---smart-human-resource-management-system.git)
+    cd DayFlow---smart-human-resource-management-system
     ```
 
 2.  **Install dependencies:**
@@ -100,7 +100,7 @@ To run this project locally, follow these steps:
 
     ```env
     # .env
-    DATABASE_URL="postgresql://USERNAME:PASSWORD@localhost:5432/workzen_db"
+    DATABASE_URL="postgresql://USERNAME:PASSWORD@localhost:5432/DayFlow_db"
     JWT_SECRET="your-super-secret-key-that-is-at-least-32-chars-long"
     ```
 
@@ -128,9 +128,9 @@ You can use the following accounts (created by the seed script) to test the diff
 
 | Role | Email | Password |
 | :--- | :--- | :--- |
-| 👑 **Admin** | `admin@workzen.com` | `admin123` |
-| 👔 **Manager** | `ananya@workzen.com` | `password123` |
-| 👤 **Employee** | `rohit@workzen.com` | `password123` |
+| 👑 **Admin** | `admin@DayFlow.com` | `admin123` |
+| 👔 **Manager** | `ananya@DayFlow.com` | `password123` |
+| 👤 **Employee** | `rohit@DayFlow.com` | `password123` |
 
 ---
 

@@ -5,13 +5,14 @@ import { useAuth } from "@/app/context/auth-context"
 import { useSidebar } from "@/app/context/sidebar-context"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Building2, Users, Clock, Calendar, Banknote, BarChart3, Settings, UserCog } from "lucide-react"
+import { Building2, Users, Clock, Calendar, Banknote, BarChart3, Settings, UserCog, Wallet } from "lucide-react"
 
 // Main navigation menu items visible to all users
 const menuItems = [
   { icon: Users, label: "Dashboard", href: "/dashboard", roles: ['Admin', 'Manager', 'Employee', 'HR Officer', 'Payroll Officer'] },
   { icon: Clock, label: "Attendance", href: "/attendance", roles: ['Admin', 'Manager', 'Employee', 'HR Officer', 'Payroll Officer'] },
   { icon: Calendar, label: "Time Off", href: "/leave", roles: ['Admin', 'Manager', 'Employee', 'HR Officer', 'Payroll Officer'] },
+  { icon: Wallet, label: "My Payroll", href: "/my-payroll", roles: ['Employee'] },
   { icon: Banknote, label: "Payroll", href: "/payroll", roles: ['Admin', 'Manager', 'Payroll Officer'] },
   { icon: BarChart3, label: "Reports", href: "/reports", roles: ['Admin', 'Manager', 'HR Officer'] },
 ]
@@ -50,7 +51,7 @@ export function Sidebar() {
             </div>
           )}
           <div>
-            <h2 className="font-bold text-foreground">{user?.companyName || "WorkZen"}</h2>
+            <h2 className="font-bold text-foreground">{user?.companyName || "DayFlow"}</h2>
             <p className="text-xs text-muted-foreground">{user?.role || "User"}</p>
           </div>
         </div>
@@ -68,9 +69,8 @@ export function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                  isActive ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted"
-                }`}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted"
+                  }`}
               >
                 <Icon size={20} />
                 <span className="font-medium">{item.label}</span>
@@ -96,9 +96,8 @@ export function Sidebar() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                      isActive ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted"
-                    }`}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted"
+                      }`}
                   >
                     <Icon size={20} />
                     <span className="font-medium">{item.label}</span>

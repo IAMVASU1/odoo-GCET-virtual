@@ -39,9 +39,9 @@ export function Navbar() {
           </button>
           <Link href="/dashboard" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">WZ</span>
+              <span className="text-white font-bold text-sm">DF</span>
             </div>
-            <span className="font-bold text-lg text-foreground">WorkZen</span>
+            <span className="font-bold text-lg text-foreground">DayFlow</span>
           </Link>
         </div>
 
@@ -51,7 +51,7 @@ export function Navbar() {
             className="flex items-center gap-3 p-2 hover:bg-muted rounded-lg transition-colors"
           >
             <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold shadow-md">
-              {user?.avatar || "U"}
+              <User size={20} />
             </div>
           </button>
 
@@ -60,8 +60,24 @@ export function Navbar() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg overflow-hidden"
+              className="absolute right-0 mt-2 w-64 bg-card border border-border rounded-lg shadow-lg overflow-hidden"
             >
+              {/* User Info Section */}
+              <div className="px-4 py-3 border-b border-border bg-muted/30">
+                <p className="font-semibold text-foreground">{user?.name || "User"}</p>
+                <p className="text-xs text-muted-foreground">{user?.email}</p>
+                <div className="mt-2 space-y-1">
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-medium">Role:</span> {user?.role || "Employee"}
+                  </p>
+                  {user?.salary && (
+                    <p className="text-xs text-muted-foreground">
+                      <span className="font-medium">Salary:</span> ₹{user.salary.toLocaleString()}/month
+                    </p>
+                  )}
+                </div>
+              </div>
+
               <Link
                 href="/profile"
                 className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors text-sm border-b border-border"

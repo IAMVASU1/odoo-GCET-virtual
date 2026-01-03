@@ -15,7 +15,7 @@ import { Upload, Eye, EyeOff } from "lucide-react"
 export default function SignUp() {
   const router = useRouter()
   const { signup } = useAuth()
-  
+
   // Form state management
   const [companyName, setCompanyName] = useState("")
   const [name, setName] = useState("")
@@ -123,7 +123,7 @@ export default function SignUp() {
    */
   const generateLoginId = () => {
     if (!companyName || !name) return ""
-    
+
     // Get company initials (first two letters of each word)
     const companyInitials = companyName
       .split(" ")
@@ -131,19 +131,19 @@ export default function SignUp() {
       .join("")
       .toUpperCase()
       .slice(0, 4) // Max 4 characters
-    
+
     // Get first and last name initials
     const nameParts = name.trim().split(" ")
     const firstName = nameParts[0] || ""
     const lastName = nameParts[nameParts.length - 1] || ""
     const nameInitials = (firstName.slice(0, 2) + lastName.slice(0, 2)).toUpperCase()
-    
+
     // Get current year
     const year = new Date().getFullYear()
-    
+
     // Generate serial number (in production, this would come from database)
     const serialNumber = "0001"
-    
+
     return `${companyInitials}${nameInitials}${year}${serialNumber}`
   }
 
@@ -171,16 +171,16 @@ export default function SignUp() {
   const handleSignUp = async (e) => {
     e.preventDefault()
     setErrors({})
-    
+
     // Validate all form fields
     const validationErrors = validateSignUpForm()
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors)
       return
     }
-    
+
     setIsSubmitting(true)
-    
+
     // Create user data object matching backend API expectations
     const userData = {
       name,
@@ -189,19 +189,19 @@ export default function SignUp() {
       companyName, // Backend uses this as department
       phone,
     }
-    
+
     try {
       // Call signup function which will create user in database
       const result = await signup(userData)
-      
+
       // Show success message
       alert(`Account successfully ban gaya!\n\nEmail: ${email}\n\nAb aap login kar sakte hain.`)
       await router.push("/")
     } catch (error) {
       console.error("Signup error:", error)
       // Display error message to user
-      setErrors({ 
-        general: error.message || "Account banane mein problem aa gayi. Kripya phir se try karein." 
+      setErrors({
+        general: error.message || "Account banane mein problem aa gayi. Kripya phir se try karein."
       })
     } finally {
       setIsSubmitting(false)
@@ -225,7 +225,7 @@ export default function SignUp() {
           </div>
 
           <h1 className="text-2xl font-bold text-center text-foreground mb-2">Sign Up</h1>
-          <p className="text-center text-muted-foreground mb-6">Create your WorkZen account</p>
+          <p className="text-center text-muted-foreground mb-6">Create your DayFlow account</p>
 
           {/* General Error Message */}
           {errors.general && (
@@ -250,9 +250,8 @@ export default function SignUp() {
                 />
                 <label
                   htmlFor="logo-upload"
-                  className={`flex flex-col items-center justify-center w-32 h-32 border-2 border-dashed rounded-lg cursor-pointer hover:border-primary transition-colors bg-background ${
-                    errors.logo ? "border-red-500" : "border-border"
-                  }`}
+                  className={`flex flex-col items-center justify-center w-32 h-32 border-2 border-dashed rounded-lg cursor-pointer hover:border-primary transition-colors bg-background ${errors.logo ? "border-red-500" : "border-border"
+                    }`}
                 >
                   {logoPreview ? (
                     <img src={logoPreview} alt="Logo preview" className="w-full h-full object-cover rounded-lg" />
@@ -280,9 +279,8 @@ export default function SignUp() {
                   if (errors.companyName) setErrors({ ...errors, companyName: "" })
                 }}
                 placeholder="Odoo India"
-                className={`w-full px-4 py-2 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 ${
-                  errors.companyName ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-accent"
-                }`}
+                className={`w-full px-4 py-2 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 ${errors.companyName ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-accent"
+                  }`}
               />
               {errors.companyName && <p className="mt-1 text-sm text-red-600">{errors.companyName}</p>}
             </div>
@@ -300,9 +298,8 @@ export default function SignUp() {
                   if (errors.name) setErrors({ ...errors, name: "" })
                 }}
                 placeholder="John Doe"
-                className={`w-full px-4 py-2 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 ${
-                  errors.name ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-accent"
-                }`}
+                className={`w-full px-4 py-2 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 ${errors.name ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-accent"
+                  }`}
               />
               {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
             </div>
@@ -320,9 +317,8 @@ export default function SignUp() {
                   if (errors.email) setErrors({ ...errors, email: "" })
                 }}
                 placeholder="john@example.com"
-                className={`w-full px-4 py-2 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 ${
-                  errors.email ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-accent"
-                }`}
+                className={`w-full px-4 py-2 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 ${errors.email ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-accent"
+                  }`}
               />
               {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
             </div>
@@ -340,9 +336,8 @@ export default function SignUp() {
                   if (errors.phone) setErrors({ ...errors, phone: "" })
                 }}
                 placeholder="+1 234 567 8900"
-                className={`w-full px-4 py-2 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 ${
-                  errors.phone ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-accent"
-                }`}
+                className={`w-full px-4 py-2 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 ${errors.phone ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-accent"
+                  }`}
               />
               {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
             </div>
@@ -361,9 +356,8 @@ export default function SignUp() {
                     if (errors.password) setErrors({ ...errors, password: "" })
                   }}
                   placeholder="••••••••"
-                  className={`w-full px-4 py-2 pr-10 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 ${
-                    errors.password ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-accent"
-                  }`}
+                  className={`w-full px-4 py-2 pr-10 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 ${errors.password ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-accent"
+                    }`}
                 />
                 <button
                   type="button"
@@ -390,9 +384,8 @@ export default function SignUp() {
                     if (errors.confirmPassword) setErrors({ ...errors, confirmPassword: "" })
                   }}
                   placeholder="••••••••"
-                  className={`w-full px-4 py-2 pr-10 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 ${
-                    errors.confirmPassword ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-accent"
-                  }`}
+                  className={`w-full px-4 py-2 pr-10 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 ${errors.confirmPassword ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-accent"
+                    }`}
                 />
                 <button
                   type="button"

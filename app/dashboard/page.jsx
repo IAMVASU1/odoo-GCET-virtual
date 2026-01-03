@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "@/app/context/auth-context"
 import { LayoutWrapper } from "@/components/layout-wrapper"
-import { Search, Plane, Clock, LogIn, LogOut as LogOutIcon } from "lucide-react"
+import { Search, Plane, Clock, LogIn, LogOut as LogOutIcon, Users, CheckCircle, XCircle, Calendar, IndianRupee, TrendingUp, Award } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import toast, { Toaster } from "react-hot-toast"
 
@@ -208,7 +208,9 @@ export default function Dashboard() {
             status: calculatedStatus,
             leaveReason: leaveReason,
             checkInTime: checkInTime,
+            checkInTime: checkInTime,
             checkOutTime: checkOutTime,
+            leaveBalance: user.leaveBalance,
           }
         })
         setEmployees(transformedEmployees)
@@ -337,30 +339,157 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Employees</h1>
-            <p className="text-muted-foreground">Manage and view employee information</p>
+            <h1 className="text-3xl font-bold text-foreground">
+              {user?.role === 'Admin' ? 'Employee Management' : 'My Dashboard'}
+            </h1>
+            <p className="text-muted-foreground">
+              {user?.role === 'Admin' ? 'Manage and view employee information' : 'Your personal workspace'}
+            </p>
           </div>
 
-          {/* Search bar */}
-          <div className="relative w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search employees..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
+          {/* Search bar - Only for Admin */}
+          {user?.role === 'Admin' && (
+            <div className="relative w-80">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="Search employees..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+          )}
         </div>
 
-        {/* Info banner */}
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-          <p className="text-sm text-blue-700 dark:text-blue-300">
-            <strong>Note:</strong> Employees can mark their attendance using the Check In/Check Out system.{" "}
-            Current time: <strong>{currentTime}</strong>
-          </p>
+        {/* Quick Stats Cards - Blue/White Professional Theme */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Total Employees */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white dark:bg-slate-800 border-2 border-blue-100 dark:border-blue-900 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">Total Employees</p>
+                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">{employees.length}</p>
+              </div>
+              <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-full">
+                <Users size={24} className="text-blue-600 dark:text-blue-400" />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Present Today */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white dark:bg-slate-800 border-2 border-green-100 dark:border-green-900 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">Present Today</p>
+                <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">
+                  {employees.filter(e => e.status?.toLowerCase() === 'present').length}
+                </p>
+              </div>
+              <div className="bg-green-50 dark:bg-green-900/30 p-3 rounded-full">
+                <CheckCircle size={24} className="text-green-600 dark:text-green-400" />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* On Leave */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white dark:bg-slate-800 border-2 border-orange-100 dark:border-orange-900 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">On Leave</p>
+                <p className="text-3xl font-bold text-orange-600 dark:text-orange-400 mt-2">
+                  {employees.filter(e => e.status?.toLowerCase() === 'on-leave' || e.status?.toLowerCase() === 'leave').length}
+                </p>
+              </div>
+              <div className="bg-orange-50 dark:bg-orange-900/30 p-3 rounded-full">
+                <Plane size={24} className="text-orange-600 dark:text-orange-400" />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Absent */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white dark:bg-slate-800 border-2 border-red-100 dark:border-red-900 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">Absent</p>
+                <p className="text-3xl font-bold text-red-600 dark:text-red-400 mt-2">
+                  {employees.filter(e => e.status?.toLowerCase() === 'absent').length}
+                </p>
+              </div>
+              <div className="bg-red-50 dark:bg-red-900/30 p-3 rounded-full">
+                <XCircle size={24} className="text-red-600 dark:text-red-400" />
+              </div>
+            </div>
+          </motion.div>
         </div>
+
+        {/* User Info Card - Blue/White Professional Theme */}
+        {user && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg p-6 shadow-lg"
+          >
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-2xl font-bold">
+                  {user.name?.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold">{user.name}</h3>
+                  <p className="text-blue-100">{user.role}</p>
+                  <p className="text-sm text-blue-100 mt-1">
+                    <Clock className="inline w-4 h-4 mr-1" />
+                    {currentTime}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                {/* Salary Card */}
+                {user.salary && (
+                  <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 min-w-[140px]">
+                    <div className="flex items-center gap-2 mb-1">
+                      <IndianRupee size={16} />
+                      <p className="text-sm font-medium">Monthly Salary</p>
+                    </div>
+                    <p className="text-2xl font-bold">₹{user.salary.toLocaleString()}</p>
+                  </div>
+                )}
+
+                {/* Leave Balance */}
+                <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 min-w-[140px]">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Plane size={16} />
+                    <p className="text-sm font-medium">Leave Balance</p>
+                  </div>
+                  <p className="text-2xl font-bold">
+                    {employees.find(e => e.id === user.id)?.leaveBalance ?? user.leaveBalance ?? 0} days
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Loading spinner */}
         {loading ? (
@@ -368,13 +497,13 @@ export default function Dashboard() {
             <div className="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
             <p className="mt-4 text-muted-foreground">Loading employees...</p>
           </div>
-        ) : filteredEmployees.length === 0 ? (
+        ) : user?.role === 'Admin' && filteredEmployees.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground">No employees found</p>
             <p className="text-sm text-muted-foreground mt-2">Total employees in system: {employees.length}</p>
           </div>
-        ) : (
-          // Employee grid
+        ) : user?.role === 'Admin' ? (
+          // Employee grid - Only show for Admin
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredEmployees.map((employee) => (
               <motion.div
@@ -432,7 +561,7 @@ export default function Dashboard() {
               </motion.div>
             ))}
           </div>
-        )}
+        ) : null}
 
         {/* Modal for selected employee */}
         <AnimatePresence>

@@ -16,6 +16,9 @@ model User {
   department String?      // Department name (optional)
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
+  salary       Float?       @default(0)
+  leaveBalance Int          @default(24) // Default 24 paid leaves per year
+  hourlyRate   Float?       @default(0)
 
   
   attendance Attendance[]
@@ -31,6 +34,7 @@ model Attendance {
   status    String    // "Present", "Absent", etc.
   checkIn   DateTime? // Check-in time (optional)
   checkOut  DateTime? // Check-out time (optional)
+  workingHours Float?   @default(0)
   createdAt DateTime  @default(now())
   
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -42,6 +46,7 @@ model Leave {
   id        Int      @id @default(autoincrement())
   userId    Int
   reason    String
+  type      String   @default("Paid") // "Paid", "Unpaid", "Sick"
   status    String   @default("Pending") // "Pending", "Approved", "Rejected"
   from      String   // Format: "2025-11-07"
   to        String   // Format: "2025-11-08"
@@ -55,6 +60,7 @@ model Payroll {
   userId    Int
   month     String   // "October", "November", etc.
   amount    Float
+  details   Json?    // Stores breakdown: { basic, hra, deductions, workingDays, presentDays }
   status    String   @default("Pending") // "Pending", "Paid"
   createdAt DateTime @default(now())
   

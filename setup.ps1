@@ -1,6 +1,6 @@
 # Quick Setup Script for Windows PowerShell
 
-Write-Host "🚀 WorkZen Full Stack - Setup Script" -ForegroundColor Green
+Write-Host "🚀 DayFlow Full Stack - Setup Script" -ForegroundColor Green
 Write-Host ""
 
 # Check if .env exists
@@ -10,7 +10,7 @@ if (!(Test-Path ".env")) {
     Write-Host "✅ Created .env file. Please edit it with your database credentials!" -ForegroundColor Green
     Write-Host ""
     Write-Host "⚠️  IMPORTANT: Update the following in .env:" -ForegroundColor Yellow
-    Write-Host "   DATABASE_URL=postgresql://username:password@localhost:5432/workzen_db" -ForegroundColor Cyan
+    Write-Host "   DATABASE_URL=postgresql://username:password@localhost:5432/DayFlow_db" -ForegroundColor Cyan
     Write-Host "   JWT_SECRET=your-super-secret-key-change-in-production" -ForegroundColor Cyan
     Write-Host ""
     $continue = Read-Host "Press Enter after updating .env file, or Ctrl+C to exit"
@@ -30,7 +30,7 @@ Write-Host "Next steps:" -ForegroundColor Cyan
 Write-Host "1. Start the development server: npm run dev" -ForegroundColor White
 Write-Host "2. Visit http://localhost:3000/api/seed to create test users" -ForegroundColor White
 Write-Host "3. Login with:" -ForegroundColor White
-Write-Host "   - Admin: admin@workzen.com / admin123" -ForegroundColor Gray
-Write-Host "   - Manager: ananya@workzen.com / password123" -ForegroundColor Gray
-Write-Host "   - Employee: rohit@workzen.com / password123" -ForegroundColor Gray
+Write-Host "   - Admin: admin@DayFlow.com / admin123" -ForegroundColor Gray
+Write-Host "   - Manager: ananya@DayFlow.com / password123" -ForegroundColor Gray
+Write-Host "   - Employee: rohit@DayFlow.com / password123" -ForegroundColor Gray
 Write-Host ""

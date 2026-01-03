@@ -14,7 +14,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] }) // Monospace font for code
  * Used by Next.js for SEO and browser tab display
  */
 export const metadata = {
-  title: "WorkZen - HRMS",
+  title: "DayFlow - HRMS",
   description: "Smart Human Resource Management System",
   generator: "v0.app",
   icons: {

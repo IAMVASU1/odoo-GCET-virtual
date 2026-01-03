@@ -19,7 +19,7 @@ export default function Users() {
   const [showForm, setShowForm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [editingEmployee, setEditingEmployee] = useState(null)
-  
+
   // Form state
   const [formData, setFormData] = useState({
     name: "",
@@ -29,14 +29,15 @@ export default function Users() {
     position: "",
     role: "Employee",
     salary: "",
+    leaveBalance: "24",
     password: "",
   })
-  
+
   const [formErrors, setFormErrors] = useState({})
   const [showPassword, setShowPassword] = useState(false)
   const [showCustomRole, setShowCustomRole] = useState(false)
   const [customRole, setCustomRole] = useState("")
-  
+
   // Department management
   const [departments, setDepartments] = useState([
     "Engineering",
@@ -57,7 +58,7 @@ export default function Users() {
       router.push("/dashboard")
       return
     }
-    
+
     if (user) {
       fetchEmployees()
     }
@@ -93,7 +94,7 @@ export default function Users() {
       setFilteredEmployees(employees)
       return
     }
-    
+
     const filtered = employees.filter((emp) => {
       const searchLower = query.toLowerCase()
       return (
@@ -115,69 +116,69 @@ export default function Users() {
 
   const validateForm = () => {
     const errors = {}
-    
+
     if (!formData.name.trim()) errors.name = "Name is required"
-    
+
     if (!formData.email.trim()) errors.email = "Email is required"
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) errors.email = "Invalid email format"
-    
+
     // Phone is optional
     if (formData.phone && !/^\+?[\d\s-]{10,}$/.test(formData.phone)) errors.phone = "Invalid phone number"
-    
+
     if (!formData.department.trim()) errors.department = "Department is required"
     // Position is optional
-    
+
     // Validate custom role if selected
     if (showCustomRole && !customRole.trim()) {
       errors.role = "Custom role name is required"
     }
-    
+
     // Password is only required when creating a new employee
     if (!editingEmployee) {
       if (!formData.password) errors.password = "Password is required"
       else if (formData.password.length < 6) errors.password = "Password must be at least 6 characters"
     }
-    
+
     if (formData.salary && isNaN(formData.salary)) errors.salary = "Salary must be a number"
-    
+
     return errors
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setFormErrors({})
-    
+
     const errors = validateForm()
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors)
       return
     }
-    
+
     setIsSubmitting(true)
-    
+
     try {
       if (editingEmployee) {
         // Update existing employee
         const authToken = localStorage.getItem('authToken')
         const finalRole = showCustomRole && customRole.trim() ? customRole.trim() : formData.role
         const updateData = {
-          name: formData.name.trim(),
-          email: formData.email.trim().toLowerCase(),
           role: finalRole,
           department: formData.department.trim(),
+          salary: formData.salary,
+          leaveBalance: formData.leaveBalance,
         }
-        
+
         const response = await fetch(`/api/users?id=${editingEmployee.id}`, {
           method: "PATCH",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${authToken}`
           },
           body: JSON.stringify(updateData),
         })
-        
+
         const data = await response.json()
-        
+
         if (data.success) {
           toast.success("Employee updated successfully!", {
             duration: 3000,
@@ -209,19 +210,21 @@ export default function Users() {
           password: formData.password,
           role: finalRole,
           department: formData.department.trim(),
+          salary: formData.salary,
+          leaveBalance: formData.leaveBalance,
         }
-        
+
         const response = await fetch("/api/users", {
           method: "POST",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${authToken}`
           },
           body: JSON.stringify(employeeData),
         })
-        
+
         const data = await response.json()
-        
+
         if (data.success) {
           toast.success("Employee created successfully!", {
             duration: 3000,
@@ -260,11 +263,11 @@ export default function Users() {
 
   const handleEdit = (employee) => {
     setEditingEmployee(employee)
-    
+
     // Check if the role is a custom role (not in predefined list)
     const predefinedRoles = ["Employee", "Manager", "Admin", "HR Officer", "Payroll Officer"]
     const isCustomRole = !predefinedRoles.includes(employee.role)
-    
+
     setFormData({
       name: employee.name,
       email: employee.email,
@@ -273,9 +276,10 @@ export default function Users() {
       position: employee.position,
       role: isCustomRole ? "Custom" : employee.role,
       salary: employee.salary?.toString() || "",
+      leaveBalance: employee.leaveBalance?.toString() || "24",
       password: "",
     })
-    
+
     if (isCustomRole) {
       setShowCustomRole(true)
       setCustomRole(employee.role)
@@ -283,7 +287,7 @@ export default function Users() {
       setShowCustomRole(false)
       setCustomRole("")
     }
-    
+
     setShowForm(true)
   }
 
@@ -291,7 +295,7 @@ export default function Users() {
     if (!confirm(`Are you sure you want to delete ${employee.name}? This action cannot be undone.`)) {
       return
     }
-    
+
     try {
       const authToken = localStorage.getItem('authToken')
       const response = await fetch(`/api/users?id=${employee.id}`, {
@@ -300,9 +304,9 @@ export default function Users() {
           "Authorization": `Bearer ${authToken}`
         }
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         toast.success("Employee deleted successfully!", {
           duration: 3000,
@@ -329,6 +333,7 @@ export default function Users() {
       position: "",
       role: "Employee",
       salary: "",
+      leaveBalance: "24",
       password: "",
     })
     setFormErrors({})
@@ -358,14 +363,14 @@ export default function Users() {
     if (!confirm(`Are you sure you want to remove "${deptToRemove}" department?`)) {
       return
     }
-    
+
     // Check if any employee is using this department
     const isUsed = employees.some(emp => emp.department === deptToRemove)
     if (isUsed) {
       toast.error("Cannot remove department. It is assigned to one or more employees.")
       return
     }
-    
+
     setDepartments(departments.filter(dept => dept !== deptToRemove))
     toast.success("Department removed successfully!")
   }
@@ -406,23 +411,22 @@ export default function Users() {
     emp.position,
     <span
       key={emp.id}
-      className={`px-3 py-1 rounded-full text-xs font-medium ${
-        emp.status === "present"
-          ? "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-          : "bg-gray-50 text-gray-700 dark:bg-gray-800 dark:text-gray-400"
-      }`}
+      className={`px-3 py-1 rounded-full text-xs font-medium ${emp.status === "present"
+        ? "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+        : "bg-gray-50 text-gray-700 dark:bg-gray-800 dark:text-gray-400"
+        }`}
     >
       {emp.status}
     </span>,
     <div key={emp.id} className="flex gap-2">
-      <button 
+      <button
         onClick={() => handleEdit(emp)}
         className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors text-blue-600 dark:text-blue-400"
         title="Edit employee"
       >
         <Edit2 size={16} />
       </button>
-      <button 
+      <button
         onClick={() => handleDelete(emp)}
         className="p-2 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors text-red-600 dark:text-red-400"
         title="Delete employee"
@@ -481,7 +485,7 @@ export default function Users() {
               </h3>
               <p className="text-sm text-muted-foreground">All fields marked with * are required</p>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Name */}
@@ -494,9 +498,8 @@ export default function Users() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleInputChange("name", e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${
-                      formErrors.name ? "border-red-500" : "border-border"
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${formErrors.name ? "border-red-500" : "border-border"
+                      }`}
                     placeholder="Enter full name"
                   />
                   {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
@@ -512,9 +515,8 @@ export default function Users() {
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${
-                      formErrors.email ? "border-red-500" : "border-border"
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${formErrors.email ? "border-red-500" : "border-border"
+                      }`}
                     placeholder="employee@company.com"
                   />
                   {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
@@ -530,111 +532,11 @@ export default function Users() {
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${
-                      formErrors.phone ? "border-red-500" : "border-border"
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${formErrors.phone ? "border-red-500" : "border-border"
+                      }`}
                     placeholder="+91 9876543210"
                   />
                   {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
-                </div>
-
-                {/* Department */}
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
-                    <Building2 size={16} />
-                    Department *
-                  </label>
-                  
-                  {!showCustomDepartment ? (
-                    <div className="space-y-2">
-                      <select
-                        value={formData.department}
-                        onChange={(e) => {
-                          if (e.target.value === "__add_new__") {
-                            setShowCustomDepartment(true)
-                          } else {
-                            handleInputChange("department", e.target.value)
-                          }
-                        }}
-                        className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${
-                          formErrors.department ? "border-red-500" : "border-border"
-                        }`}
-                      >
-                        <option value="">Select Department</option>
-                        {departments.map((dept) => (
-                          <option key={dept} value={dept}>{dept}</option>
-                        ))}
-                        <option value="__add_new__">+ Add New Department</option>
-                      </select>
-                      
-                      {/* Show remove button for selected department if admin */}
-                      {formData.department && user?.role === "Admin" && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveDepartment(formData.department)}
-                          className="text-xs text-red-600 hover:text-red-700 flex items-center gap-1"
-                        >
-                          <X size={12} />
-                          Remove "{formData.department}" from list
-                        </button>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={newDepartment}
-                          onChange={(e) => setNewDepartment(e.target.value)}
-                          className="flex-1 px-4 py-3 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                          placeholder="Enter new department name"
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault()
-                              handleAddDepartment()
-                            }
-                          }}
-                        />
-                        <button
-                          type="button"
-                          onClick={handleAddDepartment}
-                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                        >
-                          Add
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setShowCustomDepartment(false)
-                            setNewDepartment("")
-                          }}
-                          className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {formErrors.department && <p className="text-red-500 text-xs mt-1">{formErrors.department}</p>}
-                </div>
-
-                {/* Position */}
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
-                    <Briefcase size={16} />
-                    Position *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.position}
-                    onChange={(e) => handleInputChange("position", e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${
-                      formErrors.position ? "border-red-500" : "border-border"
-                    }`}
-                    placeholder="e.g., Senior Developer"
-                  />
-                  {formErrors.position && <p className="text-red-500 text-xs mt-1">{formErrors.position}</p>}
                 </div>
 
                 {/* Role */}
@@ -646,55 +548,20 @@ export default function Users() {
                   <select
                     value={formData.role}
                     onChange={(e) => {
-                      const selectedRole = e.target.value
-                      handleInputChange("role", selectedRole)
-                      if (selectedRole === "Custom") {
-                        setShowCustomRole(true)
-                      } else {
-                        setShowCustomRole(false)
-                        setCustomRole("")
+                      setFormData({ ...formData, role: e.target.value })
+                      if (formErrors.role) {
+                        setFormErrors(prev => ({ ...prev, role: "" }))
                       }
                     }}
-                    className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${
-                      formErrors.role ? "border-red-500" : "border-border"
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${formErrors.role ? "border-red-500" : "border-border"
+                      }`}
                   >
+                    <option value="">Select Role</option>
+                    <option value="Admin">Admin/HR</option>
                     <option value="Employee">Employee</option>
-                    <option value="Manager">Manager</option>
-                    <option value="HR Officer">HR Officer</option>
-                    <option value="Payroll Officer">Payroll Officer</option>
-                    <option value="Custom">+ Add Custom Role</option>
                   </select>
                   {formErrors.role && <p className="text-red-500 text-xs mt-1">{formErrors.role}</p>}
                 </div>
-
-                {/* Custom Role Input - Shows when Custom is selected */}
-                {showCustomRole && (
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
-                      <Shield size={16} />
-                      Custom Role Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={customRole}
-                      onChange={(e) => {
-                        setCustomRole(e.target.value)
-                        if (formErrors.role) {
-                          setFormErrors(prev => ({ ...prev, role: "" }))
-                        }
-                      }}
-                      className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${
-                        formErrors.role ? "border-red-500" : "border-border"
-                      }`}
-                      placeholder="e.g., Team Lead, Supervisor, Consultant"
-                    />
-                    {formErrors.role && <p className="text-red-500 text-xs mt-1">{formErrors.role}</p>}
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Enter a custom role name for this employee
-                    </p>
-                  </div>
-                )}
 
                 {/* Salary */}
                 <div>
@@ -706,12 +573,26 @@ export default function Users() {
                     type="text"
                     value={formData.salary}
                     onChange={(e) => handleInputChange("salary", e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${
-                      formErrors.salary ? "border-red-500" : "border-border"
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${formErrors.salary ? "border-red-500" : "border-border"
+                      }`}
                     placeholder="50000"
                   />
                   {formErrors.salary && <p className="text-red-500 text-xs mt-1">{formErrors.salary}</p>}
+                </div>
+
+                {/* Leave Balance */}
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
+                    <Briefcase size={16} />
+                    Paid Leave Balance (Days)
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.leaveBalance}
+                    onChange={(e) => handleInputChange("leaveBalance", e.target.value)}
+                    className="w-full px-4 py-3 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="24"
+                  />
                 </div>
 
                 {/* Password */}
@@ -726,9 +607,8 @@ export default function Users() {
                         type={showPassword ? "text" : "password"}
                         value={formData.password}
                         onChange={(e) => handleInputChange("password", e.target.value)}
-                        className={`w-full px-4 py-3 pr-12 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${
-                          formErrors.password ? "border-red-500" : "border-border"
-                        }`}
+                        className={`w-full px-4 py-3 pr-12 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${formErrors.password ? "border-red-500" : "border-border"
+                          }`}
                         placeholder="Create a strong password"
                       />
                       <button

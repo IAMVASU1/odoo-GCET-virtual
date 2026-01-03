@@ -50,7 +50,7 @@ export async function GET() {
         message: `${fixed.length} users ke passwords hash ho gaye!`,
         fixed: fixed,
         alreadyHashed: alreadyHashed,
-        note: 'Ab tum original passwords se login kar sakte ho. Example: admin@workzen.com / admin123'
+        note: 'Ab tum original passwords se login kar sakte ho. Example: admin@DayFlow.com / admin123'
       },
       { status: 200 }
     );

@@ -55,7 +55,7 @@ export default function Profile() {
       if (!user) return
 
       const authToken = localStorage.getItem('authToken')
-      
+
       // Fetch user data from /api/users
       const response = await fetch(`/api/users`, {
         headers: {
@@ -69,11 +69,11 @@ export default function Profile() {
       }
 
       const data = await response.json()
-      
+
       if (data.success && data.data) {
         // Find the current user's data
         const currentUser = data.data.find(u => u.id === user.id || u.email === user.email)
-        
+
         if (currentUser) {
           setEmployeeData({
             id: currentUser.id,
@@ -115,7 +115,7 @@ export default function Profile() {
 
   const handleSaveProfile = async () => {
     setIsSaving(true)
-    
+
     try {
       const response = await fetch("/api/auth", {
         method: "PUT",
@@ -125,9 +125,9 @@ export default function Profile() {
           ...editedData,
         }),
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         toast.success("Profile updated successfully!", {
           duration: 3000,
@@ -238,11 +238,10 @@ export default function Profile() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-6 py-3 font-medium transition-colors border-b-2 whitespace-nowrap ${
-                    activeTab === tab.id
+                  className={`flex items-center gap-2 px-6 py-3 font-medium transition-colors border-b-2 whitespace-nowrap ${activeTab === tab.id
                       ? "border-primary text-primary"
                       : "border-transparent text-muted-foreground hover:text-foreground"
-                  }`}
+                    }`}
                 >
                   <Icon size={18} />
                   {tab.label}
@@ -297,10 +296,9 @@ export default function Profile() {
               {/* Profile Avatar and Header */}
               <div className="flex items-center gap-6 mb-8 pb-8 border-b border-border">
                 <div
-                  className="w-24 h-24 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg"
-                  style={{ backgroundColor: employeeData?.avatarColor || "#8B5CF6" }}
+                  className="w-24 h-24 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg bg-primary"
                 >
-                  {employeeData?.avatar || user?.avatar || "U"}
+                  <User size={48} />
                 </div>
                 <div>
                   <h3 className="text-3xl font-bold text-foreground">{employeeData?.name || user?.name}</h3>
@@ -492,7 +490,7 @@ export default function Profile() {
               {!isEditMode && (
                 <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                   <p className="text-sm text-blue-700 dark:text-blue-300">
-                    <strong>Note:</strong> You can edit your personal information like name, email, phone, and about section. 
+                    <strong>Note:</strong> You can edit your personal information like name, email, phone, and about section.
                     Fields like Employee ID, Role, Department, and Position require administrator access to modify.
                   </p>
                 </div>

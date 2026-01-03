@@ -102,7 +102,10 @@ export async function POST(request) {
 
     // Request body se data nikalo
     const body = await request.json();
-    let { userId, reason, from, to, status } = body;
+    let { userId, reason, from, to, status, type } = body;
+
+    // Default type to Paid if not provided
+    const leaveType = type || 'Paid';
 
     // Agar userId nahi diya toh logged-in user ki ID use karo
     if (!userId) {
@@ -112,9 +115,9 @@ export async function POST(request) {
     // Required fields check karo (userId ab optional hai)
     if (!reason || !from || !to) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'reason, from aur to date required hain' 
+        {
+          success: false,
+          error: 'reason, from aur to date required hain'
         },
         { status: 400 }
       );
@@ -123,12 +126,12 @@ export async function POST(request) {
     // Status validate karo
     const validStatuses = ['Pending', 'Approved', 'Rejected'];
     const leaveStatus = status || 'Pending'; // Default Pending
-    
+
     if (!validStatuses.includes(leaveStatus)) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Status Pending, Approved ya Rejected hona chahiye' 
+        {
+          success: false,
+          error: 'Status Pending, Approved ya Rejected hona chahiye'
         },
         { status: 400 }
       );
@@ -137,9 +140,9 @@ export async function POST(request) {
     // Employee sirf apne liye request kar sakta hai
     if (hasRole(user, ['Employee']) && userId !== user.id) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Tum sirf apne liye leave request kar sakte ho' 
+        {
+          success: false,
+          error: 'Tum sirf apne liye leave request kar sakte ho'
         },
         { status: 403 }
       );
@@ -186,9 +189,9 @@ export async function POST(request) {
 
     if (overlappingLeaves.length > 0) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'In dates ke liye pehle se leave request hai' 
+        {
+          success: false,
+          error: 'In dates ke liye pehle se leave request hai'
         },
         { status: 409 }
       );
@@ -202,6 +205,7 @@ export async function POST(request) {
         from: from,
         to: to,
         status: leaveStatus,
+        type: leaveType,
       },
       include: {
         user: {
@@ -217,10 +221,10 @@ export async function POST(request) {
     });
 
     return NextResponse.json(
-      { 
-        success: true, 
+      {
+        success: true,
         message: 'Leave request successfully create ho gaya!',
-        data: newLeave 
+        data: newLeave
       },
       { status: 201 }
     );
@@ -300,6 +304,30 @@ export async function PATCH(request) {
         { success: false, error: `Leave already ${leave.status}` },
         { status: 400 }
       );
+    }
+
+    // Logic for Paid Leaves Deduction
+    if (leave.type === 'Paid' && status === 'Approved') {
+      // Calculate days
+      const startDate = new Date(leave.from);
+      const endDate = new Date(leave.to);
+      const diffTime = Math.abs(endDate - startDate);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+      // Check balance
+      const user = await prisma.user.findUnique({ where: { id: leave.userId } });
+      if (user.leaveBalance < diffDays) {
+        return NextResponse.json(
+          { success: false, error: `Insufficient Paid Leave Balance. Available: ${user.leaveBalance}, Requested: ${diffDays}` },
+          { status: 400 }
+        );
+      }
+
+      // Deduct balance
+      await prisma.user.update({
+        where: { id: leave.userId },
+        data: { leaveBalance: user.leaveBalance - diffDays }
+      });
     }
 
     // Update leave status
