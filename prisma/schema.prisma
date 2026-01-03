@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int          @id @default(autoincrement())
+  name       String
+  email      String       @unique
+  password   String       // User ka password (production mein hash karna hai)
+  role       String       // "Employee", "Manager", "Admin"
+  department String?      // Department name (optional)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  
+  attendance Attendance[]
+  leaves     Leave[]
+  payrolls   Payroll[]
+
+}
+
+model Attendance {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  date      String    // Format: "2025-11-08"
+  status    String    // "Present", "Absent", etc.
+  checkIn   DateTime? // Check-in time (optional)
+  checkOut  DateTime? // Check-out time (optional)
+  createdAt DateTime  @default(now())
+  
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, date])
+}
+
+model Leave {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  reason    String
+  status    String   @default("Pending") // "Pending", "Approved", "Rejected"
+  from      String   // Format: "2025-11-07"
+  to        String   // Format: "2025-11-08"
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Payroll {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  month     String   // "October", "November", etc.
+  amount    Float
+  status    String   @default("Pending") // "Pending", "Paid"
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, month])
+}
